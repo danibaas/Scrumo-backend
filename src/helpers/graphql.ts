@@ -1,25 +1,22 @@
 // Server can be started with: "npm run serve" This will launch a dev environment. nodemon required (npm install -g nodemon typescript)
 import * as express from "express";
 import { ApolloServer, gql } from "apollo-server-express";
+import { User } from "../entities/User";
+import { GraphQLList, buildSchema } from "graphql";
 
 export function connect(): Promise<Express.Application> {
     return new Promise((resolve) => {
-        const typeDefs = gql`type Query {hello: String}`;
+        const schema = await buildSchema({
+            resolvers: [],
+            emitSchemaFile: true
+        });
 
-        const resolvers = {
-            Query: {
-                hello: () => "Hello world!",
-            },
-        };
-
-        const server = new ApolloServer({ typeDefs, resolvers });
-
+        const server = new ApolloServer({schema});
         const app = express();
-        server.applyMiddleware({ app });
-
-        app.listen({ port: 4000 }, () =>
-            console.log("Now browse to http://localhost:4000" + server.graphqlPath)
-        );
-        resolve(app);
+        server.applyMiddleware({app});
+        app.listen({port: 4000}, () => {
+            console.log("Server running on http://localhost:4000/graphql");
+            resolve(app);
+        });
     });
 }
