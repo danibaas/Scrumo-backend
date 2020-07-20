@@ -3,15 +3,15 @@ import * as express from "express";
 import { ApolloServer, gql } from "apollo-server-express";
 import { User } from "../entities/User";
 import { GraphQLList, buildSchema } from "graphql";
+import { typeDefs } from "./schema";
 
 export function connect(): Promise<Express.Application> {
     return new Promise((resolve) => {
-        const schema = await buildSchema({
+        /*const schema = await buildSchema({
             resolvers: [],
             emitSchemaFile: true
-        });
-
-        const server = new ApolloServer({schema});
+        });*/
+        const server = new ApolloServer({typeDefs});
         const app = express();
         server.applyMiddleware({app});
         app.listen({port: 4000}, () => {
